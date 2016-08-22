@@ -23,19 +23,19 @@ namespace VideoDownloader
         private void button1_Click(object sender, EventArgs e)
         {
             //step1 解析出頁面的vimeo iframe
-            //var restClient = new RestClient("http://www.wenguitar.com/gtfree1.html");
-            var restClient = new RestClient("http://player.vimeo.com/video/99632493?title=0&byline=0&portrait=0");
+            var restClient = new RestClient("http://www.wenguitar.com/gtfree1.html");
             var request = new RestRequest(Method.GET);
             request.AddHeader("X-Frame-Options", "GOFORIT");
             restClient.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36";
             var response = restClient.Execute(request);
 
+            //step2 從回傳的html解析出iframe網址
 
+            //step3 向iframe網址發出請求
+            var restClient2 = new RestClient("https://player.vimeo.com/video/99632493?title=0&byline=0&portrait=0");
+            //step4 從iframe網址回傳的response取得mp4的位址
 
-            //step2 解析出頁面的mp4網址存進list
-
-            //step3 開始下載影片
-
+            //step5 開始下載
             //startDownload();
         }
 

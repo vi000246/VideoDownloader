@@ -1,0 +1,13 @@
+﻿此程式是用來解析出vimeo的下載地址
+
+請見官網說明
+https://vimeo.com/help/faq/managing-your-videos/privacy-settings
+
+使用者可以將私人影片embed到特定的網址
+非此網址就無法打開
+
+此程式專門用來解析出此類embed的vimeo網址
+
+使用範例
+蔡文展吉他網的影片頁面
+http://www.wenguitar.com
