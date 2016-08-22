@@ -25,8 +25,6 @@ namespace VideoDownloader
             //step1 解析出頁面的vimeo iframe
             var restClient = new RestClient("http://www.wenguitar.com/gtfree1.html");
             var request = new RestRequest(Method.GET);
-            request.AddHeader("X-Frame-Options", "GOFORIT");
-            restClient.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36";
             var response = restClient.Execute(request);
 
             //step2 從回傳的html解析出iframe網址
