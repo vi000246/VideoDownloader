@@ -20,7 +20,10 @@ namespace VideoDownloader
         public Form1()
         {
             InitializeComponent();
+            //下載地址
             textBox1.Text = "http://www.wenguitar.com/gtfree1.html";
+            //存檔路徑預設是桌面
+            textBox2.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); ;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -99,7 +102,8 @@ namespace VideoDownloader
                 WebClient client = new WebClient();
                 client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
                 client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
-                client.DownloadFileAsync(new Uri(url), @"C:\Users\Administrator\Desktop\test.mp4");
+                //下載地址和儲存路徑  儲存路徑由使用者選擇的folder和guid和副檔名.mp4
+                client.DownloadFileAsync(new Uri(url), textBox2.Text+Guid.NewGuid().ToString("N")+@".mp4");
             });
             thread.Start();
         }
@@ -122,5 +126,18 @@ namespace VideoDownloader
             });
         }
         #endregion
+
+        //瀏覽按鈕
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+            {
+                dlg.Description = "請選擇一個資料夾";
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                   textBox2.Text=dlg.SelectedPath;
+                }
+            }
+        }
     }
 }
