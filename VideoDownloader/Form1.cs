@@ -43,19 +43,31 @@ namespace VideoDownloader
 
             //step3 向iframe網址發出請求 並回傳html
             string html = string.Empty;
+            List<string> videoLinkList = new List<string>();
+            Regex reg = new Regex(@"(?<match>https?://[0-9a-zA-Z-]*.vimeocdn.com/[\d*/]*.mp4\?expires=\d*&token=[a-zA-Z0-9]*)");
             IframeUrlList.ForEach(delegate(String url)
             {
                 html=SendRequestToVimeo(url);
+                MatchCollection match = reg.Matches(html);
+                foreach (Match m in match)
+                {
+                    videoLinkList.Add(m.Groups["match"].Value);
+                }
             });
 
-            //step4 從iframe網址回傳的response取得mp4的位址
-
-            //step5 開始下載
-            //startDownload();
+            //step4 開始下載
+            videoLinkList.ForEach(delegate(String url)
+            {
+                startDownload(url);
+            });
         }
 
 
-        //取得mp4檔案所在的頁面
+        /// <summary>
+        /// 取得iframe的html 用來解析出mp4網址
+        /// </summary>
+        /// <param name="url">iframe網址</param>
+        /// <returns></returns>
         private string SendRequestToVimeo(string url) {
             HttpWebRequest requestFromVimeo = HttpWebRequest.Create(url) as HttpWebRequest;
             string result = null;
@@ -76,14 +88,18 @@ namespace VideoDownloader
         }
 
         #region 檔案下載相關
-        private void startDownload()
+        /// <summary>
+        /// 下載檔案
+        /// </summary>
+        /// <param name="url">下載地址</param>
+        private void startDownload(string url)
         {
             Thread thread = new Thread(() =>
             {
                 WebClient client = new WebClient();
                 client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
                 client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
-                client.DownloadFileAsync(new Uri("https://14-lvl3-pdl.vimeocdn.com/01/4926/3/99632493/267008272.mp4?expires=1471849315&token=0f1f5dd0f5901cc337d25"), @"C:\Users\Administrator\Desktop\test.mp4");
+                client.DownloadFileAsync(new Uri(url), @"C:\Users\Administrator\Desktop\test.mp4");
             });
             thread.Start();
         }
