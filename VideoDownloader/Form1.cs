@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,19 +20,34 @@ namespace VideoDownloader
         public Form1()
         {
             InitializeComponent();
+            textBox1.Text = "http://www.wenguitar.com/gtfree1.html";
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             //step1 解析出頁面的vimeo iframe
-            var restClient = new RestClient("http://www.wenguitar.com/gtfree1.html");
+            var restClient = new RestClient(textBox1.Text);
             var request = new RestRequest(Method.GET);
             var response = restClient.Execute(request);
 
             //step2 從回傳的html解析出iframe網址
+            List<string> IframeUrlList = new List<string>();
+            Regex qariRegex = new Regex(@"(?<match>//player.vimeo.com/video/\d{8}\?[^""]*)");
+            MatchCollection mc = qariRegex.Matches(response.Content.ToString());
+            foreach (Match m in mc)
+            {
+                //將解析出來的網址放入List<T>裡
+                string url = "https:" + m.Groups["match"].Value.Replace("amp;", "");
+                IframeUrlList.Add(url);
+            }
 
-            //step3 向iframe網址發出請求
-            var restClient2 = new RestClient("https://player.vimeo.com/video/99632493?title=0&byline=0&portrait=0");
+            //step3 向iframe網址發出請求 並回傳html
+            string html = string.Empty;
+            IframeUrlList.ForEach(delegate(String url)
+            {
+                html=SendRequestToVimeo(url);
+            });
+
             //step4 從iframe網址回傳的response取得mp4的位址
 
             //step5 開始下載
@@ -38,7 +55,25 @@ namespace VideoDownloader
         }
 
 
+        //取得mp4檔案所在的頁面
+        private string SendRequestToVimeo(string url) {
+            HttpWebRequest requestFromVimeo = HttpWebRequest.Create(url) as HttpWebRequest;
+            string result = null;
+            requestFromVimeo.Method = "Get";
+            //取得domain url
+            Uri myUri = new Uri(textBox1.Text);
+            string host = "http://"+myUri.Host;
+            requestFromVimeo.Referer = host;//必須要加這個 才能避免vimeo forbidden
+            requestFromVimeo.UserAgent = " Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko";
 
+            using (WebResponse responseFromVimeo = requestFromVimeo.GetResponse())
+            {
+                StreamReader sr = new StreamReader(responseFromVimeo.GetResponseStream());
+                result = sr.ReadToEnd();
+                sr.Close();
+            }
+            return result;
+        }
 
         #region 檔案下載相關
         private void startDownload()
