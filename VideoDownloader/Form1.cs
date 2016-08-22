@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,9 +22,27 @@ namespace VideoDownloader
 
         private void button1_Click(object sender, EventArgs e)
         {
-            startDownload();
+            //step1 解析出頁面的vimeo iframe
+            //var restClient = new RestClient("http://www.wenguitar.com/gtfree1.html");
+            var restClient = new RestClient("http://player.vimeo.com/video/99632493?title=0&byline=0&portrait=0");
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("X-Frame-Options", "GOFORIT");
+            restClient.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36";
+            var response = restClient.Execute(request);
+
+
+
+            //step2 解析出頁面的mp4網址存進list
+
+            //step3 開始下載影片
+
+            //startDownload();
         }
 
+
+
+
+        #region 檔案下載相關
         private void startDownload()
         {
             Thread thread = new Thread(() =>
@@ -53,5 +72,6 @@ namespace VideoDownloader
                 label1.Text = "下載完成";
             });
         }
+        #endregion
     }
 }
