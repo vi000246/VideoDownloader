@@ -68,6 +68,10 @@ namespace VideoDownloader
                     }
                 });
 
+                if (videoLinkList.Count == 0) {
+                    MessageBox.Show("找不到影片下載連結!!");
+                }
+
                 //step4 開始下載
                 videoLinkList.ForEach(delegate(String url)
                 {
