@@ -17,6 +17,8 @@ namespace VideoDownloader
 {
     public partial class Form1 : Form
     {
+        private double allpercentage;
+
         public Form1()
         {
             InitializeComponent();
@@ -28,6 +30,8 @@ namespace VideoDownloader
 
         private void button1_Click(object sender, EventArgs e)
         {
+            //step0 重置各參數
+
             //step1 解析出頁面的vimeo iframe
             var restClient = new RestClient(textBox1.Text);
             var request = new RestRequest(Method.GET);
@@ -103,7 +107,7 @@ namespace VideoDownloader
                 client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
                 client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
                 //下載地址和儲存路徑  儲存路徑由使用者選擇的folder和guid和副檔名.mp4
-                client.DownloadFileAsync(new Uri(url), textBox2.Text+Guid.NewGuid().ToString("N")+@".mp4");
+                client.DownloadFileAsync(new Uri(url), textBox2.Text+"\\"+Guid.NewGuid().ToString("N")+@".mp4");
             });
             thread.Start();
         }
@@ -111,11 +115,11 @@ namespace VideoDownloader
         {
             this.BeginInvoke((MethodInvoker)delegate
             {
-                double bytesIn = double.Parse(e.BytesReceived.ToString());
-                double totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
-                double percentage = bytesIn / totalBytes * 100;
-                label1.Text = "下載中.."+Math.Round(percentage,1)+"%";
-                progressBar1.Value = int.Parse(Math.Truncate(percentage).ToString());
+                // double bytesIn = double.Parse(e.BytesReceived.ToString());
+                // double totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
+                //double percentage = bytesIn / totalBytes * 100;
+                label1.Text = "下載進度:" + e.ProgressPercentage + "% ";
+                progressBar1.Value = int.Parse(Math.Truncate((double)e.ProgressPercentage).ToString());
             });
         }
         void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
