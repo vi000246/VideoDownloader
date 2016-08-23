@@ -25,7 +25,7 @@ namespace VideoDownloader
         {
             InitializeComponent();
             //下載地址
-            //textBox1.Text = "http://www.wenguitar.com/gtfree1.html";
+            textBox1.Text = "http://www.wenguitar.com/tw-index.php";
             //存檔路徑預設是桌面
             textBox2.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); ;
         }
@@ -40,13 +40,17 @@ namespace VideoDownloader
                 button1.Enabled = false;
                 button2.Enabled = false;
                 //step1 解析出頁面的vimeo iframe
+                if (String.IsNullOrEmpty(textBox1.Text))
+                {
+                    throw new ArgumentException("請輸入網址!!");
+                }
                 var restClient = new RestClient(textBox1.Text);
                 var request = new RestRequest(Method.GET);
                 var response = restClient.Execute(request);
 
                 //step2 從回傳的html解析出iframe網址
                 List<string> IframeUrlList = new List<string>();
-                Regex qariRegex = new Regex(@"(?<match>//player.vimeo.com/video/\d{8}\?[^""]*)");
+                Regex qariRegex = new Regex(@"(?<match>//player.vimeo.com/video/\d*\?[^""]*)");
                 MatchCollection mc = qariRegex.Matches(response.Content.ToString());
                 foreach (Match m in mc)
                 {
@@ -61,7 +65,7 @@ namespace VideoDownloader
 
                 //step3 向iframe網址發出請求 並回傳html
                 string html = string.Empty;
-                Regex reg = new Regex(@"(?<match>https?://[0-9a-zA-Z-]*.vimeocdn.com/[\d*/]*.mp4\?expires=\d*&token=[a-zA-Z0-9]*)");
+                Regex reg = new Regex(@"(?<match>https?://[0-9a-zA-Z-]*.vimeocdn.com/[a-z0-9\d-/]*.mp4[^""]*)");
                 IframeUrlList.ForEach(delegate(String url)
                 {
                     html = SendRequestToVimeo(url);

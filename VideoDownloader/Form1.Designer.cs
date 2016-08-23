@@ -69,12 +69,12 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(5, 128);
+            this.label2.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label2.Location = new System.Drawing.Point(11, 128);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(181, 72);
+            this.label2.Size = new System.Drawing.Size(146, 64);
             this.label2.TabIndex = 3;
-            this.label2.Text = "說明:\r\n此程式用來下載嵌入在iframe\r\n裡的Viemo檔\r\nThis program can download\r\n Vimeo video that emb" +
-    "ed in webpage.\r\nJust enter the webpage\'s url.\r\n";
+            this.label2.Text = "說明: \r\n請輸入有內嵌Vimeo\r\n影片的網頁Url\r\n\r\n";
             // 
             // textBox1
             // 
