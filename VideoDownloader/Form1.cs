@@ -25,7 +25,7 @@ namespace VideoDownloader
         {
             InitializeComponent();
             //下載地址
-            textBox1.Text = "http://www.wenguitar.com/tw-index.php";
+            //textBox1.Text = "http://www.wenguitar.com/tw-index.php";
             //存檔路徑預設是桌面
             textBox2.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); ;
         }
