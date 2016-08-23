@@ -30,43 +30,50 @@ namespace VideoDownloader
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //step0 重置各參數
-
-            //step1 解析出頁面的vimeo iframe
-            var restClient = new RestClient(textBox1.Text);
-            var request = new RestRequest(Method.GET);
-            var response = restClient.Execute(request);
-
-            //step2 從回傳的html解析出iframe網址
-            List<string> IframeUrlList = new List<string>();
-            Regex qariRegex = new Regex(@"(?<match>//player.vimeo.com/video/\d{8}\?[^""]*)");
-            MatchCollection mc = qariRegex.Matches(response.Content.ToString());
-            foreach (Match m in mc)
+            try
             {
-                //將解析出來的網址放入List<T>裡
-                string url = "https:" + m.Groups["match"].Value.Replace("amp;", "");
-                IframeUrlList.Add(url);
-            }
+                //step0 重置各參數
 
-            //step3 向iframe網址發出請求 並回傳html
-            string html = string.Empty;
-            List<string> videoLinkList = new List<string>();
-            Regex reg = new Regex(@"(?<match>https?://[0-9a-zA-Z-]*.vimeocdn.com/[\d*/]*.mp4\?expires=\d*&token=[a-zA-Z0-9]*)");
-            IframeUrlList.ForEach(delegate(String url)
-            {
-                html=SendRequestToVimeo(url);
-                MatchCollection match = reg.Matches(html);
-                foreach (Match m in match)
+                //step1 解析出頁面的vimeo iframe
+                var restClient = new RestClient(textBox1.Text);
+                var request = new RestRequest(Method.GET);
+                var response = restClient.Execute(request);
+
+                //step2 從回傳的html解析出iframe網址
+                List<string> IframeUrlList = new List<string>();
+                Regex qariRegex = new Regex(@"(?<match>//player.vimeo.com/video/\d{8}\?[^""]*)");
+                MatchCollection mc = qariRegex.Matches(response.Content.ToString());
+                foreach (Match m in mc)
                 {
-                    videoLinkList.Add(m.Groups["match"].Value);
+                    //將解析出來的網址放入List<T>裡
+                    string url = "https:" + m.Groups["match"].Value.Replace("amp;", "");
+                    IframeUrlList.Add(url);
                 }
-            });
 
-            //step4 開始下載
-            videoLinkList.ForEach(delegate(String url)
+                //step3 向iframe網址發出請求 並回傳html
+                string html = string.Empty;
+                List<string> videoLinkList = new List<string>();
+                Regex reg = new Regex(@"(?<match>https?://[0-9a-zA-Z-]*.vimeocdn.com/[\d*/]*.mp4\?expires=\d*&token=[a-zA-Z0-9]*)");
+                IframeUrlList.ForEach(delegate(String url)
+                {
+                    html = SendRequestToVimeo(url);
+                    MatchCollection match = reg.Matches(html);
+                    foreach (Match m in match)
+                    {
+                        videoLinkList.Add(m.Groups["match"].Value);
+                    }
+                });
+
+                //step4 開始下載
+                videoLinkList.ForEach(delegate(String url)
+                {
+                    startDownload(url);
+                });
+            }
+            catch (Exception ex)
             {
-                startDownload(url);
-            });
+                MessageBox.Show(ex.Message);
+            }
         }
 
 
@@ -101,15 +108,22 @@ namespace VideoDownloader
         /// <param name="url">下載地址</param>
         private void startDownload(string url)
         {
-            Thread thread = new Thread(() =>
+            try
             {
-                WebClient client = new WebClient();
-                client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
-                client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
-                //下載地址和儲存路徑  儲存路徑由使用者選擇的folder和guid和副檔名.mp4
-                client.DownloadFileAsync(new Uri(url), textBox2.Text+"\\"+Guid.NewGuid().ToString("N")+@".mp4");
-            });
-            thread.Start();
+                Thread thread = new Thread(() =>
+                {
+                    WebClient client = new WebClient();
+                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                    client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                    //下載地址和儲存路徑  儲存路徑由使用者選擇的folder和guid和副檔名.mp4
+                    client.DownloadFileAsync(new Uri(url), textBox2.Text + "\\" + Guid.NewGuid().ToString("N") + @".mp4");
+                });
+                thread.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
