@@ -50,6 +50,10 @@ namespace VideoDownloader
                     IframeUrlList.Add(url);
                 }
 
+                if (IframeUrlList.Count == 0) {
+                    MessageBox.Show("找不到嵌入的Vimeo影片!!");
+                }
+
                 //step3 向iframe網址發出請求 並回傳html
                 string html = string.Empty;
                 List<string> videoLinkList = new List<string>();

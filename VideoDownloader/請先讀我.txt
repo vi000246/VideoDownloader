@@ -5,6 +5,8 @@ https://vimeo.com/help/faq/managing-your-videos/privacy-settings
 
 使用者可以將私人影片embed到特定的網址
 此程式專門用來解析出此類embed的vimeo網址
+<iframe src="//player.vimeo.com/video/VIDEO_ID" width="WIDTH" height="HEIGHT" 
+frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 使用範例
 蔡文展吉他網的影片頁面
