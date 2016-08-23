@@ -37,6 +37,7 @@
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -118,11 +119,21 @@
             this.label4.TabIndex = 8;
             this.label4.Text = "存檔資料夾:";
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(44, 232);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(80, 12);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "剩餘影片數量:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(271, 253);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.textBox2);
@@ -150,6 +161,7 @@
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
     }
 }
 

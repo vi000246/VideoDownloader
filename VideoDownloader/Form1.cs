@@ -19,11 +19,13 @@ namespace VideoDownloader
     {
         private double allpercentage;
 
+        private Queue<string> _downloadUrls = new Queue<string>();
+
         public Form1()
         {
             InitializeComponent();
             //下載地址
-            textBox1.Text = "http://www.wenguitar.com/gtfree1.html";
+            //textBox1.Text = "http://www.wenguitar.com/gtfree1.html";
             //存檔路徑預設是桌面
             textBox2.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); ;
         }
@@ -33,7 +35,10 @@ namespace VideoDownloader
             try
             {
                 //step0 重置各參數
+                progressBar1.Value = 0;
 
+                button1.Enabled = false;
+                button2.Enabled = false;
                 //step1 解析出頁面的vimeo iframe
                 var restClient = new RestClient(textBox1.Text);
                 var request = new RestRequest(Method.GET);
@@ -51,12 +56,11 @@ namespace VideoDownloader
                 }
 
                 if (IframeUrlList.Count == 0) {
-                    MessageBox.Show("找不到嵌入的Vimeo影片!!");
+                    throw new ArgumentException("找不到嵌入的Vimeo影片!!");
                 }
 
                 //step3 向iframe網址發出請求 並回傳html
                 string html = string.Empty;
-                List<string> videoLinkList = new List<string>();
                 Regex reg = new Regex(@"(?<match>https?://[0-9a-zA-Z-]*.vimeocdn.com/[\d*/]*.mp4\?expires=\d*&token=[a-zA-Z0-9]*)");
                 IframeUrlList.ForEach(delegate(String url)
                 {
@@ -64,23 +68,24 @@ namespace VideoDownloader
                     MatchCollection match = reg.Matches(html);
                     foreach (Match m in match)
                     {
-                        videoLinkList.Add(m.Groups["match"].Value);
+                        _downloadUrls.Enqueue(m.Groups["match"].Value);
                     }
                 });
 
-                if (videoLinkList.Count == 0) {
-                    MessageBox.Show("找不到影片下載連結!!");
-                }
-
-                //step4 開始下載
-                videoLinkList.ForEach(delegate(String url)
+                if (!_downloadUrls.Any())
                 {
-                    startDownload(url);
-                });
+                    throw new ArgumentException("找不到影片下載連結!!");
+                }
+                //step4 開始下載
+
+                startDownload();
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                button1.Enabled = true;
+                button2.Enabled = true;
             }
         }
 
@@ -114,19 +119,28 @@ namespace VideoDownloader
         /// 下載檔案
         /// </summary>
         /// <param name="url">下載地址</param>
-        private void startDownload(string url)
+        private void startDownload()
         {
             try
             {
-                Thread thread = new Thread(() =>
+                //用佇列和遞迴的方式解決多檔案的問題
+                if (_downloadUrls.Any())
                 {
+                    label5.Text = "剩餘檔案數量:" + _downloadUrls.Count().ToString();
                     WebClient client = new WebClient();
                     client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
                     client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
                     //下載地址和儲存路徑  儲存路徑由使用者選擇的folder和guid和副檔名.mp4
+                    var url = _downloadUrls.Dequeue();
                     client.DownloadFileAsync(new Uri(url), textBox2.Text + "\\" + Guid.NewGuid().ToString("N") + @".mp4");
-                });
-                thread.Start();
+                }
+                else
+                {
+                    label5.Text = "剩餘檔案數量:" + _downloadUrls.Count().ToString();
+                    label1.Text = "下載完成";
+                    button1.Enabled = true;
+                    button2.Enabled = true;
+                }
             }
             catch (Exception ex)
             {
@@ -137,19 +151,25 @@ namespace VideoDownloader
         {
             this.BeginInvoke((MethodInvoker)delegate
             {
-                // double bytesIn = double.Parse(e.BytesReceived.ToString());
-                // double totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
-                //double percentage = bytesIn / totalBytes * 100;
-                label1.Text = "下載進度:" + e.ProgressPercentage + "% ";
-                progressBar1.Value = int.Parse(Math.Truncate((double)e.ProgressPercentage).ToString());
+                 double bytesIn = double.Parse(e.BytesReceived.ToString());
+                 double totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
+                double percentage = Math.Round( bytesIn / totalBytes * 100,1);
+                label1.Text = "下載進度:" + percentage + "% ";
+                progressBar1.Value = int.Parse(Math.Truncate(percentage).ToString());
             });
         }
         void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            this.BeginInvoke((MethodInvoker)delegate
+            if (e.Error != null)
             {
-                label1.Text = "下載完成";
-            });
+                // handle error scenario
+                throw e.Error;
+            }
+            if (e.Cancelled)
+            {
+                // handle cancelled scenario
+            }
+            startDownload();
         }
         #endregion
 
