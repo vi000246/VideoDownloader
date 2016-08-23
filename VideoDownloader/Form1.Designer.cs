@@ -41,9 +41,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(196, 165);
+            this.button1.Location = new System.Drawing.Point(186, 128);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(80, 60);
             this.button1.TabIndex = 0;
             this.button1.Text = "開始下載";
             this.button1.UseVisualStyleBackColor = true;
@@ -68,11 +68,12 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 191);
+            this.label2.Location = new System.Drawing.Point(5, 128);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(249, 12);
+            this.label2.Size = new System.Drawing.Size(181, 72);
             this.label2.TabIndex = 3;
-            this.label2.Text = "說明:此程式用來下載嵌入在iframe裡的Viemo檔";
+            this.label2.Text = "說明:\r\n此程式用來下載嵌入在iframe\r\n裡的Viemo檔\r\nThis program can download\r\n Vimeo video that emb" +
+    "ed in webpage.\r\nJust enter the webpage\'s url.\r\n";
             // 
             // textBox1
             // 
