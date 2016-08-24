@@ -32,6 +32,9 @@ namespace VideoDownloader
                 VideoIdList.Add(id);
             }
 
+            if (VideoIdList.Count == 0) {
+                throw new ArgumentException("無法讀取到頁面影片");
+            }
 
             foreach (var id in VideoIdList) {
                 //依照影片id取得影片下載網址
@@ -48,6 +51,9 @@ namespace VideoDownloader
                 fileInfo.DownLoadLink = linkMatch.Groups["url"].ToString();
                 fileInfo.FileName = linkMatch.Groups["title"].ToString().Replace(".mp4","");
                 _downloadUrls.Enqueue(fileInfo);
+            }
+            if (_downloadUrls.Count == 0) {
+                throw new ArgumentException("無法取得影片下載連結");
             }
 
             return _downloadUrls;
