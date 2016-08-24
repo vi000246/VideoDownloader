@@ -13,14 +13,14 @@ namespace VideoDownloader
     public class VimeoHelper
     {
         //解析出來的下載連結
-        private static Queue<string> _downloadUrls = new Queue<string>();
+        private static Queue<Model.FileInfo> _downloadUrls = new Queue<Model.FileInfo>();
 
         //textBox1.Text的值
         public static string inputUrl = String.Empty;
  
 
         //根據傳進來的html解析出影片下載連結
-        public static Queue<string> GetVimeoDownLoadLink(string responseHtml)
+        public static Queue<Model.FileInfo> GetVimeoDownLoadLink(string responseHtml)
         {
 
 
@@ -42,6 +42,7 @@ namespace VideoDownloader
 
             //向iframe網址發出請求 並回傳html
             string html = string.Empty;
+            Model.FileInfo fileInfo = new Model.FileInfo();
             Regex reg = new Regex(@"(?<match>https?://[0-9a-zA-Z-]*.vimeocdn.com/[a-z0-9\d-/]*.mp4[^""]*)");
             IframeUrlList.ForEach(delegate(String url)
             {
@@ -49,7 +50,8 @@ namespace VideoDownloader
                 MatchCollection match = reg.Matches(html);
                 foreach (Match m in match)
                 {
-                    _downloadUrls.Enqueue(m.Groups["match"].Value);
+                    fileInfo.DownLoadLink = m.Groups["match"].Value;
+                    _downloadUrls.Enqueue(fileInfo);
                 }
             });
 

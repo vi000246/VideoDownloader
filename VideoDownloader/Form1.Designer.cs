@@ -72,12 +72,12 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label2.Location = new System.Drawing.Point(12, 192);
+            this.label2.Font = new System.Drawing.Font("新細明體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label2.Location = new System.Drawing.Point(12, 179);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(146, 48);
+            this.label2.Size = new System.Drawing.Size(150, 52);
             this.label2.TabIndex = 3;
-            this.label2.Text = "說明: \r\n請輸入有內嵌Vimeo\r\n影片的網頁Url\r\n";
+            this.label2.Text = "說明: \r\n請輸入有內嵌Vimeo\r\n影片的網頁Url\r\n或二次元之門的動畫頁面\r\n";
             // 
             // textBox1
             // 

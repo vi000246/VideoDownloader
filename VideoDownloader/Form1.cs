@@ -17,9 +17,9 @@ namespace VideoDownloader
 {
     public partial class Form1 : Form
     {
-        private Queue<string> _downloadUrls = new Queue<string>();
+        private Queue<Model.FileInfo> _downloadUrls = new Queue<Model.FileInfo>();
         //委派 決定要呼叫哪個helper的function
-        public delegate Queue<string> GetDownLoadLink(string responseHtml);
+        public delegate Queue<Model.FileInfo> GetDownLoadLink(string responseHtml);
         GetDownLoadLink downloadVideo;
 
         public Form1()
@@ -27,7 +27,7 @@ namespace VideoDownloader
             InitializeComponent();
             //下載地址
             //textBox1.Text = "http://www.wenguitar.com/tw-index.php";//蔡文展
-            textBox1.Text = "http://2d-gate.org/thread-6613-1-1.html#.V7cLofl96Uk";//二次元之門
+            //textBox1.Text = "http://2d-gate.org/thread-1368-1-1.html#.V71emPl96Ul";//二次元之門
             //存檔路徑預設是桌面
             textBox2.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             //下拉選項的選項
@@ -60,6 +60,8 @@ namespace VideoDownloader
                 var request = new RestRequest(Method.GET);
                 var response = restClient.Execute(request);
 
+                label1.Text = "下載進度:解析中";
+                    
                 //step2 依據影片來源(vimeo/二次元之門) 從回傳的html中取得下載連結
                 if (comboBox1.Text.Contains("Vimeo"))
                 {
@@ -111,8 +113,18 @@ namespace VideoDownloader
                     client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
                     client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
                     //下載地址和儲存路徑  儲存路徑由使用者選擇的folder和guid和副檔名.mp4
-                    var url = _downloadUrls.Dequeue();
-                    client.DownloadFileAsync(new Uri(url), textBox2.Text + "\\" + Guid.NewGuid().ToString("N") + @".mp4");
+                    var FileInfo = _downloadUrls.Dequeue();
+                    string FileName = String.IsNullOrEmpty(FileInfo.FileName) ?  Guid.NewGuid().ToString("N"):FileInfo.FileName;
+                    string FullPath = textBox2.Text + "\\" + FileName + @".mp4";
+                    //如果有存在檔案 則rename檔名
+                    int count = 1;
+                    while (File.Exists(FullPath))
+                    {
+                        string tempFileName = string.Format("{0}({1})", FileName, count++);
+                        FullPath = textBox2.Text + "\\" + tempFileName + @".mp4";
+                    }
+
+                    client.DownloadFileAsync(new Uri(FileInfo.DownLoadLink), FullPath);
                 }
                 else
                 {
