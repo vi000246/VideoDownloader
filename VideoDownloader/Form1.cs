@@ -17,15 +17,14 @@ namespace VideoDownloader
 {
     public partial class Form1 : Form
     {
-        private double allpercentage;
-
         private Queue<string> _downloadUrls = new Queue<string>();
 
         public Form1()
         {
             InitializeComponent();
             //下載地址
-            //textBox1.Text = "http://www.wenguitar.com/tw-index.php";
+            textBox1.Text = "http://www.wenguitar.com/tw-index.php";//蔡文展
+            //textBox1.Text = "http://2d-gate.org/thread-6613-1-1.html#.V7cLofl96Uk";//二次元之門
             //存檔路徑預設是桌面
             textBox2.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); ;
         }
@@ -39,7 +38,7 @@ namespace VideoDownloader
 
                 button1.Enabled = false;
                 button2.Enabled = false;
-                //step1 解析出頁面的vimeo iframe
+
                 if (String.IsNullOrEmpty(textBox1.Text))
                 {
                     throw new ArgumentException("請輸入網址!!");
@@ -48,39 +47,15 @@ namespace VideoDownloader
                 var request = new RestRequest(Method.GET);
                 var response = restClient.Execute(request);
 
-                //step2 從回傳的html解析出iframe網址
-                List<string> IframeUrlList = new List<string>();
-                Regex qariRegex = new Regex(@"(?<match>//player.vimeo.com/video/\d*\?[^""]*)");
-                MatchCollection mc = qariRegex.Matches(response.Content.ToString());
-                foreach (Match m in mc)
-                {
-                    //將解析出來的網址放入List<T>裡
-                    string url = "https:" + m.Groups["match"].Value.Replace("amp;", "");
-                    IframeUrlList.Add(url);
-                }
+                //step2 依據影片來源(vimeo/二次元之門) 從回傳的html中取得下載連結
 
-                if (IframeUrlList.Count == 0) {
-                    throw new ArgumentException("找不到嵌入的Vimeo影片!!");
-                }
-
-                //step3 向iframe網址發出請求 並回傳html
-                string html = string.Empty;
-                Regex reg = new Regex(@"(?<match>https?://[0-9a-zA-Z-]*.vimeocdn.com/[a-z0-9\d-/]*.mp4[^""]*)");
-                IframeUrlList.ForEach(delegate(String url)
-                {
-                    html = SendRequestToVimeo(url);
-                    MatchCollection match = reg.Matches(html);
-                    foreach (Match m in match)
-                    {
-                        _downloadUrls.Enqueue(m.Groups["match"].Value);
-                    }
-                });
+                _downloadUrls = new VimeoHelper(textBox1.Text).GetVimeoDownLoadLink(response.Content.ToString());
 
                 if (!_downloadUrls.Any())
                 {
                     throw new ArgumentException("找不到影片下載連結!!");
                 }
-                //step4 開始下載
+                //step2 開始下載
 
                 startDownload();
 
@@ -94,29 +69,7 @@ namespace VideoDownloader
         }
 
 
-        /// <summary>
-        /// 取得iframe的html 用來解析出mp4網址
-        /// </summary>
-        /// <param name="url">iframe網址</param>
-        /// <returns></returns>
-        private string SendRequestToVimeo(string url) {
-            HttpWebRequest requestFromVimeo = HttpWebRequest.Create(url) as HttpWebRequest;
-            string result = null;
-            requestFromVimeo.Method = "Get";
-            //取得domain url
-            Uri myUri = new Uri(textBox1.Text);
-            string host = "http://"+myUri.Host;
-            requestFromVimeo.Referer = host;//必須要加這個 才能避免vimeo forbidden
-            requestFromVimeo.UserAgent = " Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko";
 
-            using (WebResponse responseFromVimeo = requestFromVimeo.GetResponse())
-            {
-                StreamReader sr = new StreamReader(responseFromVimeo.GetResponseStream());
-                result = sr.ReadToEnd();
-                sr.Close();
-            }
-            return result;
-        }
 
         #region 檔案下載相關
         /// <summary>
