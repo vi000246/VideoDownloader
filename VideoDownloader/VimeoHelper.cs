@@ -13,23 +13,18 @@ namespace VideoDownloader
     public class VimeoHelper
     {
         //解析出來的下載連結
-        private Queue<string> _downloadUrls = new Queue<string>();
+        private static Queue<string> _downloadUrls = new Queue<string>();
 
         //textBox1.Text的值
-        private string inputUrl = String.Empty;
-
-        //初始化
-        public VimeoHelper(string inputUrl) {
-            this.inputUrl = inputUrl;
-        }
-
+        public static string inputUrl = String.Empty;
+ 
 
         //根據傳進來的html解析出影片下載連結
-        public Queue<string> GetVimeoDownLoadLink(string responseHtml)
+        public static Queue<string> GetVimeoDownLoadLink(string responseHtml)
         {
 
 
-            //step2 從回傳的html解析出iframe網址
+            //從回傳的html解析出iframe網址
             List<string> IframeUrlList = new List<string>();
             Regex qariRegex = new Regex(@"(?<match>//player.vimeo.com/video/\d*\?[^""]*)");
             MatchCollection mc = qariRegex.Matches(responseHtml);
@@ -45,7 +40,7 @@ namespace VideoDownloader
                 throw new ArgumentException("找不到嵌入的Vimeo影片!!");
             }
 
-            //step3 向iframe網址發出請求 並回傳html
+            //向iframe網址發出請求 並回傳html
             string html = string.Empty;
             Regex reg = new Regex(@"(?<match>https?://[0-9a-zA-Z-]*.vimeocdn.com/[a-z0-9\d-/]*.mp4[^""]*)");
             IframeUrlList.ForEach(delegate(String url)
@@ -66,7 +61,7 @@ namespace VideoDownloader
         /// </summary>
         /// <param name="url">iframe網址</param>
         /// <returns></returns>
-        private string SendRequestToVimeo(string url, string inputUrl)
+        private static string SendRequestToVimeo(string url, string inputUrl)
         {
             HttpWebRequest requestFromVimeo = HttpWebRequest.Create(url) as HttpWebRequest;
             string result = null;

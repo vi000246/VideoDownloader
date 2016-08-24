@@ -18,15 +18,27 @@ namespace VideoDownloader
     public partial class Form1 : Form
     {
         private Queue<string> _downloadUrls = new Queue<string>();
+        //委派 決定要呼叫哪個helper的function
+        public delegate Queue<string> GetDownLoadLink(string responseHtml);
+        GetDownLoadLink downloadVideo;
 
         public Form1()
         {
             InitializeComponent();
             //下載地址
-            textBox1.Text = "http://www.wenguitar.com/tw-index.php";//蔡文展
-            //textBox1.Text = "http://2d-gate.org/thread-6613-1-1.html#.V7cLofl96Uk";//二次元之門
+            //textBox1.Text = "http://www.wenguitar.com/tw-index.php";//蔡文展
+            textBox1.Text = "http://2d-gate.org/thread-6613-1-1.html#.V7cLofl96Uk";//二次元之門
             //存檔路徑預設是桌面
-            textBox2.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); ;
+            textBox2.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            //下拉選項的選項
+            Dictionary<string, string> test = new Dictionary<string, string>();
+            test.Add("1", "嵌入的Vimeo");
+            test.Add("2", "二次元之門");
+            comboBox1.DataSource = new BindingSource(test, null);
+            comboBox1.DisplayMember = "Value";
+            comboBox1.ValueMember = "Key";
+            comboBox1.SelectedIndex = 1;
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -43,19 +55,30 @@ namespace VideoDownloader
                 {
                     throw new ArgumentException("請輸入網址!!");
                 }
+                //取得回傳的html
                 var restClient = new RestClient(textBox1.Text);
                 var request = new RestRequest(Method.GET);
                 var response = restClient.Execute(request);
 
                 //step2 依據影片來源(vimeo/二次元之門) 從回傳的html中取得下載連結
+                if (comboBox1.Text.Contains("Vimeo"))
+                {
+                    VimeoHelper.inputUrl = textBox1.Text;
+                    downloadVideo = VimeoHelper.GetVimeoDownLoadLink;
+                }
+                else if (comboBox1.Text.Contains("二次元之門"))
+                {
+                    downloadVideo = _2GateHelper.GetDownLoadLink;
+                }
 
-                _downloadUrls = new VimeoHelper(textBox1.Text).GetVimeoDownLoadLink(response.Content.ToString());
+                //取得影片下載連結的佇列
+                _downloadUrls = downloadVideo(response.Content.ToString());
 
                 if (!_downloadUrls.Any())
                 {
                     throw new ArgumentException("找不到影片下載連結!!");
                 }
-                //step2 開始下載
+                //step3 開始下載
 
                 startDownload();
 
