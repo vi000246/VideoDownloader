@@ -33,12 +33,11 @@ namespace VideoDownloader
 
             foreach (var id in VideoIdList) {
                 string Url = String.Format("https://video.google.com/get_player?docid={0}&ps=docs&partnerid=30&cc_load_policy=1",id);
-                var restClient = new RestClient(Url);
-                var request = new RestRequest(Method.GET);
-                var response = restClient.Execute(request);
-                //會回傳一個pdf 但還無法解析回傳值
-                string a = response.Content.ToString();
-                //_downloadUrls.Enqueue(Url);
+                //var restClient = new RestClient(Url);
+                //var request = new RestRequest(Method.GET);
+                //var response = restClient.Execute(request);
+
+                _downloadUrls.Enqueue(Url);
             }
 
             return _downloadUrls;
