@@ -30,7 +30,7 @@ namespace VideoDownloader
         {
             InitializeComponent();
             //下載地址
-            textBox1.Text = "http://www.wenguitar.com/movieOne.php?moNo=101";//蔡文展
+            //textBox1.Text = "http://www.wenguitar.com/movieOne.php?moNo=101";//蔡文展
             //textBox1.Text = "http://2d-gate.org/thread-1368-1-1.html#.V71emPl96Ul";//二次元之門
             //存檔路徑預設是桌面
             textBox2.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
