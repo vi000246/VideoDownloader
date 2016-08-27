@@ -22,6 +22,8 @@ namespace VideoDownloader
             client.CookieContainer = new CookieContainer();
             RestRequest login = new RestRequest("/login.php", Method.POST);
 
+            if (String.IsNullOrEmpty(account) || String.IsNullOrEmpty(pwd))
+                throw new ArgumentException("無法登入蔡文展吉他 請在config設置帳號密碼");
             login.AddParameter("inputEmail", account);
             login.AddParameter("inputPassword", pwd);
 
@@ -30,7 +32,7 @@ namespace VideoDownloader
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 if (client.CookieContainer.Count == 0)
-                    throw new ArgumentException("無法登入蔡文展吉他");
+                    throw new ArgumentException("無法登入蔡文展吉他 無法取得登入cookie");
                 _cookieJar = client.CookieContainer;
             }
             return _cookieJar;
