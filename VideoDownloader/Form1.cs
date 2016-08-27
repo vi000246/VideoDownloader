@@ -22,11 +22,15 @@ namespace VideoDownloader
         public delegate Queue<Model.FileInfo> GetDownLoadLink(string responseHtml);
         GetDownLoadLink downloadVideo;
 
+        //儲存登入cookie
+        private static CookieContainer _cookieJar = new CookieContainer();
+
+
         public Form1()
         {
             InitializeComponent();
             //下載地址
-            //textBox1.Text = "http://www.wenguitar.com/tw-index.php";//蔡文展
+            textBox1.Text = "http://www.wenguitar.com/movieOne.php?moNo=101";//蔡文展
             //textBox1.Text = "http://2d-gate.org/thread-1368-1-1.html#.V71emPl96Ul";//二次元之門
             //存檔路徑預設是桌面
             textBox2.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -37,7 +41,7 @@ namespace VideoDownloader
             comboBox1.DataSource = new BindingSource(test, null);
             comboBox1.DisplayMember = "Value";
             comboBox1.ValueMember = "Key";
-            comboBox1.SelectedIndex = 1;
+            comboBox1.SelectedIndex = 0;
 
         }
 
@@ -55,9 +59,19 @@ namespace VideoDownloader
                 {
                     throw new ArgumentException("請輸入網址!!");
                 }
+
+                //如果是蔡文展的網址 就先登入取得cookie
+                if(textBox1.Text.Contains("www.wenguitar.com")){
+                    string account = System.Configuration.ConfigurationManager.AppSettings["account"];
+                    string pwd = System.Configuration.ConfigurationManager.AppSettings["pwd"];
+                    _cookieJar=  WenGuitarHelper.Login(account,pwd);
+                }
+
                 //取得回傳的html
                 var restClient = new RestClient(textBox1.Text);
                 var request = new RestRequest(Method.GET);
+                if (_cookieJar!=null)
+                    restClient.CookieContainer = _cookieJar;
                 var response = restClient.Execute(request);
 
                 label1.Text = "下載進度:解析中";

@@ -51,7 +51,9 @@ namespace VideoDownloader
                 foreach (Match m in match)
                 {
                     fileInfo.DownLoadLink = m.Groups["match"].Value;
-                    _downloadUrls.Enqueue(fileInfo);
+                    //如果沒有重覆網址 就加到佇列
+                    if(!_downloadUrls.Any(x=>x.DownLoadLink==fileInfo.DownLoadLink))
+                        _downloadUrls.Enqueue(fileInfo);
                 }
             });
 
