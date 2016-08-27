@@ -23,15 +23,22 @@ namespace VideoDownloader
         public static Queue<Model.FileInfo> GetVimeoDownLoadLink(string responseHtml)
         {
 
+            Model.FileInfo fileInfo = new Model.FileInfo();
 
             //從回傳的html解析出iframe網址
             List<string> IframeUrlList = new List<string>();
             Regex qariRegex = new Regex(@"(?<match>//player.vimeo.com/video/\d*\?[^""]*)");
+            //蔡文展專用 match出檔案名稱
+            Regex regFilename = new Regex(@"margin-bottom:10px;""\sclass=""style12"">(?<match>.*)</span>");
+
             MatchCollection mc = qariRegex.Matches(responseHtml);
+            Match matchFilename = regFilename.Match(responseHtml);
             foreach (Match m in mc)
             {
                 //將解析出來的網址放入List<T>裡
                 string url = "https:" + m.Groups["match"].Value.Replace("amp;", "");
+                //解析出蔡文展吉他網的檔名
+                fileInfo.FileName = matchFilename.Groups["match"].Value;
                 IframeUrlList.Add(url);
             }
 
@@ -42,7 +49,7 @@ namespace VideoDownloader
 
             //向iframe網址發出請求 並回傳html
             string html = string.Empty;
-            Model.FileInfo fileInfo = new Model.FileInfo();
+
             Regex reg = new Regex(@"(?<match>https?://[0-9a-zA-Z-]*.vimeocdn.com/[a-z0-9\d-/]*.mp4[^""]*)");
             IframeUrlList.ForEach(delegate(String url)
             {
