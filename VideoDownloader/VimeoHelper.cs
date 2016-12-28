@@ -27,7 +27,7 @@ namespace VideoDownloader
 
             //從回傳的html解析出iframe網址
             List<string> IframeUrlList = new List<string>();
-            Regex qariRegex = new Regex(@"(?<match>//player.vimeo.com/video/\d*\?[^""]*)");
+            Regex qariRegex = new Regex(@"(?<match>//player.vimeo.com/video/\d*/?[^""]*)");
             //蔡文展專用 match出檔案名稱
             Regex regFilename = new Regex(@"margin-bottom:10px;""\sclass=""style12"">(?<match>.*)</span>");
 
