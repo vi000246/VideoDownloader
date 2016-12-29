@@ -59,12 +59,17 @@ namespace VideoDownloader
                 {
                     throw new ArgumentException("請輸入網址!!");
                 }
-
+                string account = System.Configuration.ConfigurationManager.AppSettings["account"];
+                string pwd = System.Configuration.ConfigurationManager.AppSettings["pwd"];
                 //如果是蔡文展的網址 就先登入取得cookie
-                if(textBox1.Text.Contains("www.wenguitar.com")){
-                    string account = System.Configuration.ConfigurationManager.AppSettings["account"];
-                    string pwd = System.Configuration.ConfigurationManager.AppSettings["pwd"];
+                if(textBox1.Text.Contains("www.wenguitar.com")){ 
                     _cookieJar=  WenGuitarHelper.Login(account,pwd);
+                }
+
+                //如果是鳴流吉他 就先登入取得cookie
+                if (textBox1.Text.Contains("realsound.tw"))
+                {
+                    _cookieJar = RealSoundHelper.Login("帳號", "密碼");
                 }
 
                 //取得回傳的html
