@@ -15,7 +15,7 @@ namespace VideoDownloader
         private static CookieContainer _cookieJar = new CookieContainer();
 
 
-        //登入蔡文展
+        //登入嗚流
         public static CookieContainer Login(string account, string pwd)
         {
             RestClient client = new RestClient("http://realsound.tw/");
