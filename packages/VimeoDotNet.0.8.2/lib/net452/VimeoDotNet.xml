@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>VimeoDotNet</name>
+    </assembly>
+    <members>
+        <member name="M:VimeoDotNet.Net.IApiRequestFactory.AuthorizedRequest(System.String,RestSharp.Method,System.String,System.Collections.Generic.IDictionary{System.String,System.String},VimeoDotNet.Parameters.IParameterProvider)">
+            <summary>
+            Performs basic error checking on parameters and then generates an IApiRequest bound with the provided values. Will throw exception if invalid parameters provided.
+            </summary>
+            <param name="accessToken">API AccessToken. Cannot be null or empty.</param>
+            <param name="method">HttpMethod of the request.</param>
+            <param name="endpoint">Url of the API endpoint being called. Can contain substitution segments - ex: /user/{userId}/.</param>
+            <param name="urlSubstitutions">Dictionary containing url parameter keys and values. Continuing above example, key would be "userId", value would be "12345".</param>
+            <param name="additionalParameters">IParameterProvider that returns any other parameters the API method accepts. Can be null for no parameters, or use ParameterDictionary if typed provider not available.</param>
+            <returns>A ready to execute IApiRequest.</returns>
+        </member>
+        <member name="M:VimeoDotNet.Net.ApiRequestFactory.VerifyAccessToken(System.String)">
+            <summary>
+            Validates existence of an accessToken and throws an exception if one is not provided.
+            </summary>
+            <param name="accessToken">AccessToken being validated.</param>
+        </member>
+        <member name="M:VimeoDotNet.Net.ApiRequestFactory.VerifyParameters(VimeoDotNet.Parameters.IParameterProvider)">
+            <summary>
+            Validates an IParameterProvider and throws an exception if an error is present.
+            </summary>
+            <param name="parameters">IParameterProvider being validated.</param>
+        </member>
+        <member name="M:VimeoDotNet.Parameters.IParameterProvider.ValidationError">
+            <summary>
+            Performs validation and returns a description of the first error encountered.
+            </summary>
+            <returns>Description of first error, or null if none found.</returns>
+        </member>
+        <member name="M:VimeoDotNet.Parameters.IParameterProvider.GetParameterValues">
+            <summary>
+            Provides universal interface to retrieve parameter values.
+            </summary>
+            <returns>Returns all parameters as name/value pairs.</returns>
+        </member>
+        <member name="P:VimeoDotNet.Parameters.EditUserParameters.VideosPrivacyDownload">
+            <summary>
+            Sets the default download setting for all future videos uploaded by this user. If true, the video can be downloaded by any user.
+            </summary>
+        </member>
+        <member name="P:VimeoDotNet.Parameters.EditUserParameters.VideosPrivacyAdd">
+            <summary>
+            Sets the default add setting for all future videos uploaded by this user. If true, anyone can add the video to an album, channel, or group.
+            </summary>
+        </member>
+        <member name="P:VimeoDotNet.Parameters.EditUserParameters.VideosPrivacyComments">
+            <summary>
+            Sets the default comment setting for all future videos uploaded by this user. It specifies who can comment on the video.
+            </summary>
+        </member>
+        <member name="P:VimeoDotNet.Parameters.EditUserParameters.VideosPrivacyView">
+            <summary>
+            Sets the default view setting for all future videos uploaded by this user. It specifies who can view the video.
+            </summary>
+        </member>
+        <member name="P:VimeoDotNet.Parameters.EditUserParameters.VideosPrivacyEmbed">
+            <summary>
+            Sets the default embed setting for all future videos uploaded by this user. Whitelist allows you to define all valid embed domains.
+            </summary>
+        </member>
+        <member name="P:VimeoDotNet.Parameters.EditUserParameters.Name">
+            <summary>
+            The user's display name
+            </summary>
+        </member>
+        <member name="P:VimeoDotNet.Parameters.EditUserParameters.Location">
+            <summary>
+            The user's location
+            </summary>
+        </member>
+        <member name="P:VimeoDotNet.Parameters.EditUserParameters.Bio">
+            <summary>
+            The user's bio
+            </summary>
+        </member>
+        <member name="M:VimeoDotNet.Parameters.ParameterDictionary.ValidationError">
+            <summary>
+            ParameterDictionary is always considered valid, so no error is ever returned.
+            </summary>
+            <returns>null</returns>
+        </member>
+        <member name="M:VimeoDotNet.Authorization.VimeoClientFactory.#ctor(VimeoDotNet.Authorization.IAuthorizationClientFactory,VimeoDotNet.Net.IApiRequestFactory)">
+            <summary>
+                IOC Constructor for use with IVimeoClientFactory
+            </summary>
+            <param name="authClientFactory">The IAuthorizationClientFactory</param>
+            <param name="apiRequestFactory">The IApiRequestFactory</param>
+        </member>
+        <member name="M:VimeoDotNet.VimeoClient.#ctor(System.String,System.String)">
+            <summary>
+                Multi-user application constructor, using user-level OAuth2
+            </summary>
+            <param name="accessToken">Your Vimeo API Access Token</param>
+        </member>
+        <member name="M:VimeoDotNet.VimeoClient.#ctor(System.String)">
+            <summary>
+                Single-user application constructor, using account OAuth2 access token
+            </summary>
+            <param name="accessToken">Your Vimeo API Access Token</param>
+        </member>
+        <member name="M:VimeoDotNet.VimeoClient.#ctor(VimeoDotNet.Authorization.IAuthorizationClientFactory,VimeoDotNet.Net.IApiRequestFactory,System.String,System.String)">
+            <summary>
+                Multi-user Constructor for use with IVimeoClientFactory
+            </summary>
+            <param name="authClientFactory">The IAuthorizationClientFactory</param>
+            <param name="apiRequestFactory">The IApiRequestFactory</param>
+        </member>
+        <member name="M:VimeoDotNet.VimeoClient.#ctor(VimeoDotNet.Authorization.IAuthorizationClientFactory,VimeoDotNet.Net.IApiRequestFactory,System.String)">
+            <summary>
+                Single-user Constructor for use with IVimeoClientFactory
+            </summary>
+            <param name="authClientFactory">The IAuthorizationClientFactory</param>
+            <param name="apiRequestFactory">The IApiRequestFactory</param>
+        </member>
+        <member name="M:VimeoDotNet.VimeoClient.ExecuteApiRequest``1(VimeoDotNet.Net.IApiRequest)">
+            <summary>
+            Utility method for calling ExecuteApiRequest with the most common use case (returning
+            null for NotFound responses).
+            </summary>
+            <typeparam name="T">Type of the expected response data.</typeparam>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VimeoDotNet.VimeoClient.ExecuteApiRequest``1(VimeoDotNet.Net.IApiRequest,System.Func{System.Net.HttpStatusCode,``0},System.Net.HttpStatusCode[])">
+            <summary>
+            Utility method for performing API requests that retrieve data in a consistent manner.  
+            
+            The given request will be performed, and if the response is an outright success then
+            the response data will be unwrapped and returned.  
+            
+            If the call is not an outright success, but the status code is among the other acceptable 
+            results (provided via validStatusCodes), the getValueForStatusCode method will be called
+            to generate a return value. This allows the caller to return null or an empty list as 
+            desired.
+            
+            If neither of the above is possible, an exception will be thrown.
+            </summary>
+            <typeparam name="T">Type of the expected response data.</typeparam>
+            <param name="request"></param>
+            <param name="getValueForStatusCode"></param>
+            <param name="validStatusCodes"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

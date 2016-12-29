@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>VimeoDotNet</id>
+    <version>0.8.2</version>
+    <title>Vimeo-Dot-Net</title>
+    <authors>Stephen Commisso, Mikhail Filippov</authors>
+    <owners>Stephen Commisso, Mikhail Filippov</owners>
+    <licenseUrl>https://github.com/mfilippov/vimeo-dot-net/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/mfilippov/vimeo-dot-net</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>.NET wrapper around Vimeo's REST API v3.0.
+
+            Features:
+            - Account information retrieval
+            - Video retrieval
+            - Resumable video file upload</description>
+    <summary />
+    <releaseNotes>Add search support for GetUserVideos method</releaseNotes>
+    <copyright>Copyright © 2015-2016, Stephen Commisso, Mikhail Filippov</copyright>
+    <language>en-US</language>
+    <tags>vimeo async</tags>
+    <dependencies>
+      <dependency id="RestSharp" version="105.1.0" />
+    </dependencies>
+  </metadata>
+</package>
